@@ -44,6 +44,10 @@ You can create short animations between three keyframes using the included
 python dalle_tween_gui.py
 ```
 
+On Windows, you can launch `run_tween_gui.bat` instead. It sets up a virtual
+environment, installs the required dependencies each time it runs, and then
+starts the GUI.
+
 Select your start, middle and end images, choose how many tween frames to
 generate between each pair, and press **Generate**. The selected keyframes are
 copied into the frames directory and inserted unchanged at the beginning,
