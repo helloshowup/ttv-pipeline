@@ -2,6 +2,8 @@
 
 import base64
 import logging
+import os
+import time
 from typing import List
 
 from openai import OpenAI
@@ -81,3 +83,50 @@ def generate_dalle_prompts(start_image: str, end_image: str, frame_count: int, a
         )
 
     return prompts
+
+
+def generate_dalle_images(prompts: List[str], output_dir: str, api_key: str, max_retries: int = 2) -> List[str]:
+    """Generate images from prompts using DALL·E 3.
+
+    Args:
+        prompts: List of text prompts to render.
+        output_dir: Directory where generated frames will be saved.
+        api_key: OpenAI API key.
+        max_retries: Number of retries for each API call on failure.
+
+    Returns:
+        Paths to the saved image files in order.
+
+    Raises:
+        Exception: Propagates any errors after exhausting retries.
+    """
+    client = OpenAI(api_key=api_key)
+    os.makedirs(output_dir, exist_ok=True)
+    saved_paths: List[str] = []
+
+    for idx, prompt in enumerate(prompts):
+        frame_path = os.path.join(output_dir, f"frame_{idx:03d}.png")
+        logger.info("Generating frame %s with DALL·E 3", idx)
+
+        for retry in range(max_retries + 1):
+            try:
+                response = client.images.generate(
+                    model="dall-e-3",
+                    prompt=prompt,
+                    n=1,
+                    size="1024x1024",
+                )
+                break
+            except Exception as exc:
+                logger.error("Error generating frame %s (attempt %s/%s): %s", idx, retry + 1, max_retries, exc)
+                if retry == max_retries:
+                    raise
+                time.sleep(2)
+
+        image_base64 = response.data[0].b64_json
+        with open(frame_path, "wb") as img_file:
+            img_file.write(base64.b64decode(image_base64))
+
+        saved_paths.append(os.path.abspath(frame_path))
+
+    return saved_paths
