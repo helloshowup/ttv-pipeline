@@ -9,13 +9,12 @@ IF NOT EXIST venv (
         pause
         exit /b 1
     )
-    call venv\Scripts\activate.bat
-    echo Installing requirements...
-    pip install --upgrade pip
-    pip install -r requirements.txt
-) ELSE (
-    call venv\Scripts\activate.bat
 )
+
+call venv\Scripts\activate.bat
+echo Installing requirements...
+pip install --upgrade pip
+pip install -r requirements.txt
 
 python dalle_tween_gui.py
 pause
