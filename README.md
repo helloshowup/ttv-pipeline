@@ -53,6 +53,10 @@ visual elements of the surrounding keyframes for smooth continuity. All frames
 are saved in `./tween_output/frames/` and the final animation will be written
 to `./tween_output/tween.gif`.
 
+If the Wan2.1 FLF2V model is available (set `WAN2_DIR` and `FLF2V_MODEL_DIR` in
+your environment), the tool also creates an `./tween_output/tween.mp4` showing
+the same transition rendered with FLF2V.
+
 For advanced use, `generate_dalle_images` now accepts a `start_index` parameter
 to control the numbering of output frames when generating multiple tween
 segments. This prevents files from being overwritten.
