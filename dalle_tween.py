@@ -6,6 +6,7 @@ import os
 import time
 from typing import List
 
+from PIL import Image
 from openai import OpenAI
 
 logger = logging.getLogger(__name__)
@@ -130,3 +131,35 @@ def generate_dalle_images(prompts: List[str], output_dir: str, api_key: str, max
         saved_paths.append(os.path.abspath(frame_path))
 
     return saved_paths
+
+
+def combine_images_to_gif(image_paths: List[str], gif_path: str, duration: float = 0.2) -> str:
+    """Combine a list of images into an animated GIF.
+
+    Args:
+        image_paths: Ordered list of image file paths to include in the GIF.
+        gif_path: Path where the resulting GIF should be saved.
+        duration: Delay between frames in seconds.
+
+    Returns:
+        Path to the created GIF.
+    """
+    logger.info("Creating GIF %s from %s images", gif_path, len(image_paths))
+
+    if not image_paths:
+        raise ValueError("image_paths must contain at least one frame")
+
+    frames = [Image.open(p) for p in image_paths]
+    os.makedirs(os.path.dirname(gif_path), exist_ok=True)
+
+    first_frame, *rest = frames
+    first_frame.save(
+        gif_path,
+        save_all=True,
+        append_images=rest,
+        duration=int(duration * 1000),
+        loop=0,
+    )
+
+    logger.info("Saved animated GIF to %s", gif_path)
+    return os.path.abspath(gif_path)
