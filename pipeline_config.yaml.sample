@@ -28,6 +28,7 @@ generation_mode: "chaining"  # Options: "keyframe" or "chaining"
 # ============================================================================
 
 # Model paths for Wan2.1
+# Set these environment variables or edit the paths directly
 wan2_dir: ./Wan2.1                              # Path to Wan2.1 framework code
 flf2v_model_dir: ./models/Wan2.1-FLF2V-14B-720P # Path to the FLF2V model weights (for keyframe mode)
 i2v_model_dir: ./models/Wan2.1-I2V-14B-720P     # Path to the I2V model weights (for chaining mode)

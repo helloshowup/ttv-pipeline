@@ -37,6 +37,8 @@ from dalle_tween import (
     generate_dalle_prompts,
     generate_dalle_images,
     combine_images_to_gif,
+    generate_flf2v_tween,
+    combine_videos,
 )
 
 
@@ -151,6 +153,24 @@ class TweenApp:
             gif_path = os.path.join(out_dir, "tween.gif")
             combine_images_to_gif(all_images, gif_path)
             self.log_message(f"GIF saved to {gif_path}", color=Colors.GREEN)
+
+            wan2_dir = os.environ.get("WAN2_DIR")
+            flf2v_model_dir = os.environ.get("FLF2V_MODEL_DIR")
+            if wan2_dir and flf2v_model_dir:
+                seg1 = os.path.join(out_dir, "segment_01.mp4")
+                seg2 = os.path.join(out_dir, "segment_02.mp4")
+                self.log_message("Generating FLF2V video start->middle...")
+                generate_flf2v_tween(start_frame, middle_frame, seg1, wan2_dir, flf2v_model_dir)
+                self.log_message("Generating FLF2V video middle->end...")
+                generate_flf2v_tween(middle_frame, end_frame, seg2, wan2_dir, flf2v_model_dir)
+                final_mp4 = os.path.join(out_dir, "tween.mp4")
+                combine_videos([seg1, seg2], final_mp4)
+                self.log_message(f"Video saved to {final_mp4}", color=Colors.GREEN)
+            else:
+                self.log_message(
+                    "WAN2_DIR and FLF2V_MODEL_DIR must be set to generate video",
+                    color=Colors.YELLOW,
+                )
         except Exception as exc:
             self.log_message(f"Error: {exc}", color=Colors.RED)
             messagebox.showerror("Generation Failed", str(exc))

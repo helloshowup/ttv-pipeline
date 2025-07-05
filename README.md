@@ -44,6 +44,10 @@ You can create short animations between three keyframes using the included
 python dalle_tween_gui.py
 ```
 
+On Windows, you can launch `run_tween_gui.bat` instead. It sets up a virtual
+environment, installs the required dependencies each time it runs, and then
+starts the GUI.
+
 Select your start, middle and end images, choose how many tween frames to
 generate between each pair, and press **Generate**. The selected keyframes are
 copied into the frames directory and inserted unchanged at the beginning,
@@ -52,6 +56,10 @@ Each tween prompt instructs the model to match the artistic style and key
 visual elements of the surrounding keyframes for smooth continuity. All frames
 are saved in `./tween_output/frames/` and the final animation will be written
 to `./tween_output/tween.gif`.
+
+If the Wan2.1 FLF2V model is available (set `WAN2_DIR` and `FLF2V_MODEL_DIR` in
+your environment), the tool also creates an `./tween_output/tween.mp4` showing
+the same transition rendered with FLF2V.
 
 For advanced use, `generate_dalle_images` now accepts a `start_index` parameter
 to control the numbering of output frames when generating multiple tween

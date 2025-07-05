@@ -189,3 +189,57 @@ def combine_images_to_gif(image_paths: List[str], gif_path: str, duration: float
 
     logger.info("Saved animated GIF to %s", gif_path)
     return os.path.abspath(gif_path)
+
+
+def generate_flf2v_tween(
+    start_frame: str,
+    end_frame: str,
+    output_path: str,
+    wan2_dir: str,
+    flf2v_model_dir: str,
+    frame_num: int = 16,
+) -> str:
+    """Generate a short video between two frames using Wan2.1 FLF2V."""
+
+    from pipeline import run_command
+
+    cmd = [
+        "python",
+        "generate.py",
+        "--task",
+        "flf2v-14B",
+        "--size",
+        "1280*720",
+        "--ckpt_dir",
+        flf2v_model_dir,
+        "--first_frame",
+        start_frame,
+        "--last_frame",
+        end_frame,
+        "--frame_num",
+        str(frame_num),
+        "--prompt",
+        "",
+        "--save_file",
+        output_path,
+        "--sample_guide_scale",
+        "5.0",
+        "--sample_steps",
+        "40",
+        "--sample_shift",
+        "5.0",
+    ]
+
+    run_command(cmd, cwd=wan2_dir)
+    return os.path.abspath(output_path)
+
+
+def combine_videos(video_paths: List[str], out_file: str) -> str:
+    """Stitch multiple videos into a single MP4."""
+
+    from pipeline import stitch_video_segments
+
+    stitched = stitch_video_segments(video_paths, out_file)
+    if stitched is None:
+        raise RuntimeError("Failed to stitch tween videos")
+    return stitched
